@@ -2,6 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:todoo_app/constants.dart';
 
+/// A customizable button component for the Todoo app.
+///
+/// `TodooButton` offers a reusable button widget with various styling options.
+/// It provides properties for customization, allowing for:
+///   - Icons and text labels with optional color and size control.
+///   - Background color and padding/margin adjustments.
+///   - Button dimensions (height and width).
+///
+/// Key functionalities:
+///   - `build`: Constructs the button using an `InkWell` for tap handling.
+///     - The button is a `Container` with rounded corners and customizable color.
+///     - An `Iconify` widget is used for displaying an icon (optional).
+///     - Text label is displayed using `Text` with theme-based styling (optional).
+///     - Margin and padding are configurable using properties.
+///     - Button size can be controlled with `buttonHeight` and `buttonWidth`.
 class TodooButton extends StatelessWidget {
   const TodooButton({
     super.key,

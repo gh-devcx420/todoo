@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconify_flutter/icons/material_symbols.dart';
 import 'package:todoo_app/constants.dart';
+import 'package:todoo_app/providers/tasks_provider.dart';
 import 'package:todoo_app/screens/settings_screen.dart';
 import 'package:todoo_app/widgets/tasks_button.dart';
 import 'package:todoo_app/widgets/tasks_card.dart';
 
-import '../providers/tasks_provider.dart';
-
+/// Displays a list of all tasks in the Todoo app.
+///
+/// `AllTasksScreen` is a `ConsumerWidget` that builds the UI for displaying all tasks.
+/// It uses Riverpod to watch the `allTasksProvider` and dynamically updates the UI based on the task list.
+/// If there are no tasks, a placeholder with an "Add" image is displayed.
+/// If there are tasks, a `ListView` of `TodooTaskCard` widgets is shown, displaying only the uncompleted tasks.
+/// An AppBar with a settings button is included, which navigates the user to the `SettingsScreen` on tap.
 class AllTasksScreen extends ConsumerWidget {
   const AllTasksScreen({super.key});
 
@@ -22,6 +28,10 @@ class AllTasksScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final taskListWatcher = ref.watch(allTasksProvider);
+
+    final isAtleastOneTodoo =
+        taskListWatcher.any((task) => task.isCompleted == false);
     Widget content = Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -37,13 +47,14 @@ class AllTasksScreen extends ConsumerWidget {
       ),
     );
 
-    final taskListWatcher = ref.watch(allTasksProvider);
-    if (taskListWatcher.isNotEmpty) {
+    if (taskListWatcher.isNotEmpty && isAtleastOneTodoo) {
       content = Padding(
         padding: kScaffoldBodyPadding,
         child: ListView(
           children: [
-            ...taskListWatcher.map(
+            ...taskListWatcher.where((task) {
+              return !task.isCompleted;
+            }).map(
               (todooTask) => TodooTaskCard(currentTask: todooTask),
             ),
           ],

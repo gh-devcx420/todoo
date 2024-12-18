@@ -10,6 +10,16 @@ import 'package:todoo_app/screens/add_tasks_page.dart';
 import 'package:todoo_app/screens/all_tasks_page.dart';
 import 'package:todoo_app/screens/completed_tasks_page.dart';
 
+/// Main app screen with bottom navigation.
+///
+/// `TodooHome` manages the app's main navigation using a bottom navigation bar.
+/// It uses Riverpod to manage the current navigation index and displays different
+/// screens based on user selection.
+/// Key functionalities:
+///   - `_decidePage`: Returns the appropriate screen widget based on the navigation index.
+///   - `buildNavBarItem`: Constructs a single bottom navigation bar item with dynamic styling.
+///   - `build`: Builds the `Scaffold` with the dynamically selected body and the bottom navigation bar.
+///     - The bottom navigation bar's `onTap` callback resets the editing state and updates the navigation index.
 class TodooHome extends ConsumerWidget {
   const TodooHome({super.key});
 
@@ -33,7 +43,6 @@ class TodooHome extends ConsumerWidget {
     required String title,
     required int position,
   }) {
-    final isLightMode = Theme.of(context).brightness == Brightness.light;
     return SalomonBottomBarItem(
       icon: Iconify(
         icon,
@@ -60,13 +69,14 @@ class TodooHome extends ConsumerWidget {
         ref.watch(bottomNavigationBarProvider);
     final bottomNavBarIndexStateReader =
         ref.read(bottomNavigationBarProvider.notifier);
-    final isEditing = ref.read(currentEditingTaskProvider.notifier);
+    final currentlyEditingTaskWatcher =
+        ref.read(currentEditingTaskProvider.notifier);
     return Scaffold(
       body: _decidePage(bottomNavBarIndexStateWatcher),
       bottomNavigationBar: SalomonBottomBar(
         currentIndex: bottomNavBarIndexStateWatcher,
         onTap: (newValueOnTap) {
-          isEditing.isEditingCurrently(false, 'Adding Task');
+          currentlyEditingTaskWatcher.isEditingCurrently(false, 'Adding Task');
           bottomNavBarIndexStateReader.onNavBarItemTap(newValueOnTap);
         },
         duration: const Duration(seconds: 1),

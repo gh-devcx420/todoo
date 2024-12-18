@@ -1,6 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:todoo_app/constants.dart';
 
+/// Defines light and dark themes for the Todoo app.
+///
+/// `AppTheme` provides static methods to create `ThemeData` objects
+/// for light and dark modes, ensuring consistent styling throughout the app.
+/// It uses a base text style and a color scheme to generate the themes.
+///
+/// Key functionalities:
+///
+/// `lightTheme(TextStyle baseTextStyle, ColorScheme appColourScheme)`:
+///   - Creates a light theme based on provided base text style and color scheme.
+///   - Uses Material 3 styling.
+///   - Configures various theme properties:
+///     - `hoverColor`, `splashColor`, `highlightColor`: Set to transparent to remove default hover/splash effects.
+///     - `appBarTheme`: Styles the app bar with specific background color, icon color, and text style.
+///     - `inputDecorationTheme`: Styles text input fields with rounded borders, primary color borders, and a filled background.
+///     - `listTileTheme`: Styles list tiles with specific text styles, background color, and rounded corners.
+///     - `textTheme`: Sets the text theme using the `setTextThemes` method.
+///
+/// `darkTheme(TextStyle baseTextStyle, ColorScheme appColourScheme)`:
+///   - Creates a dark theme based on provided base text style and color scheme.
+///   - Uses Material 3 styling.
+///   - Configures various theme properties, similar to the light theme, but with appropriate dark mode color adjustments.
+///
+/// `setTextThemes(TextStyle baseStyle, Color textColor)`:
+///   - Creates a `TextTheme` based on a base text style and a text color.
+///   - Defines styles for various text categories
+///   (titleLarge, titleMedium, titleSmall, labelLarge, labelMedium, labelSmall,
+///   bodyLarge, bodyMedium, bodySmall) by copying the base style and customizing font size, weight, and color.
 class AppTheme {
   static ThemeData lightTheme(
       TextStyle baseTextStyle, ColorScheme appColourScheme) {
@@ -11,6 +39,10 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         surfaceTintColor: Colors.transparent,
         backgroundColor: appColourScheme.surface,
+        iconTheme: IconThemeData(
+          color: appColourScheme.primary,
+          size: 20,
+        ),
         titleTextStyle: TextStyle(
           fontFamily: 'JosefinSans',
           fontSize: 24,

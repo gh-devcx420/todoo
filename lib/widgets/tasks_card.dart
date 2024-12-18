@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:iconify_flutter/icons/ci.dart';
 import 'package:iconify_flutter/icons/ic.dart';
 import 'package:iconify_flutter/icons/mdi.dart';
+import 'package:iconify_flutter/icons/ph.dart';
 import 'package:todoo_app/constants.dart';
 import 'package:todoo_app/enums.dart';
 import 'package:todoo_app/models/tasks_model.dart';
@@ -15,6 +15,33 @@ import 'package:todoo_app/widgets/tasks_confirmation_dialogue.dart';
 import 'package:todoo_app/widgets/tasks_label.dart';
 import 'package:todoo_app/widgets/tasks_pop_up_menu.dart';
 
+/// A customizable task card widget component for the Todoo app.
+///
+/// `TodooTaskCard` displays information about a single task in a styled card format.
+/// It utilizes Provider to access various state management providers.
+/// Key functionalities:
+///   - Displays task title, deadline, time, priority, category (if set).
+///   - Handles taps for opening task details and shows a popup menu for edit/delete options.
+///   - Updates task completion status using a confirmation dialog.
+///   - Utilizes various helper functions for formatting date, time, priority, and category labels.
+///
+/// Build Function Breakdown:
+///   - `InkWell`: Wraps the card for tap detection and task detail navigation.
+///   - `Container`: Main card container with rounded corners and background color.
+///   - `IntrinsicHeight`: Ensures the card adapts to its content height.
+///   - `Row`: Divides the card into colored bar and content section.
+///     - Colored bar: Represents task priority using theme's primary color.
+///     - Content section (Expanded): Shows task details in a `Column`.
+///       - Task title row: Displays title with ellipsis overflow and optional location/reminder icons.
+///       - Task details section (IntrinsicHeight): Nested `Row` for deadline, time, priority, category.
+///         - Left side: Displays deadline, time, priority (if set), and category (if set) using `TaskLabel`.
+///         - Right side: Completion button ('Done' or 'Incomplete') based on task status.
+///   - `TodooButton`: Used for the popup menu button (dots) and completion button.
+///     - Popup menu button triggers a custom `showTodooMenu` function for edit/delete options.
+///     - Completion button updates task completion state with confirmation.
+
+/// **Note:** This widget relies on several external providers for data
+///           and state management.
 class TodooTaskCard extends ConsumerWidget {
   const TodooTaskCard({super.key, required this.currentTask});
 
@@ -106,9 +133,6 @@ class TodooTaskCard extends ConsumerWidget {
                             width: 4,
                           ),
                           TodooButton(
-                            icon: Mdi.dots_vertical,
-                            key: buttonKey,
-                            padding: const EdgeInsets.all(3),
                             onButtonTap: () async {
                               final RenderBox renderBox =
                                   buttonKey.currentContext!.findRenderObject()
@@ -116,22 +140,17 @@ class TodooTaskCard extends ConsumerWidget {
                               final Offset offset =
                                   renderBox.localToGlobal(Offset.zero);
 
-                              /// Calling custom popup menu by passing current context and offset details
+                              ///Calling custom popup menu by passing current context and offset details.
                               final selectedValue = await showTodooMenu(
                                 context: context,
                                 offset: offset,
                               );
 
                               if (selectedValue == 'Edit') {
-                                Future.delayed(
-                                  const Duration(milliseconds: 150),
-                                  () {
-                                    currentIdProvider.isEditingCurrently(
-                                        true, currentTask.id);
-                                    bottomNavBarIndexStateWatcher
-                                        .onNavBarItemTap(2);
-                                  },
-                                );
+                                currentIdProvider.isEditingCurrently(
+                                    true, currentTask.id);
+                                bottomNavBarIndexStateWatcher
+                                    .onNavBarItemTap(2);
                               } else if (selectedValue == 'Delete') {
                                 Future.delayed(
                                     const Duration(milliseconds: 150),
@@ -161,6 +180,9 @@ class TodooTaskCard extends ConsumerWidget {
                                 });
                               }
                             },
+                            key: buttonKey,
+                            padding: const EdgeInsets.all(3),
+                            icon: Mdi.dots_vertical,
                           ),
                         ],
                       ),
@@ -177,7 +199,7 @@ class TodooTaskCard extends ConsumerWidget {
                                 TaskLabel(
                                   labelText: Utils.formatDate(
                                       currentTask.deadlineDate),
-                                  icon: Ic.baseline_calendar_month,
+                                  icon: Ph.calendar_fill,
                                 ),
                                 if (currentTask.deadlineTime != null) ...[
                                   const SizedBox(
@@ -186,7 +208,7 @@ class TodooTaskCard extends ConsumerWidget {
                                   TaskLabel(
                                     labelText: Utils.formatTime(
                                         currentTask.deadlineTime!),
-                                    icon: Ci.clock,
+                                    icon: Mdi.clock,
                                   ),
                                 ],
                                 if (currentTask.priority != Priority.none) ...[
@@ -227,12 +249,47 @@ class TodooTaskCard extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TodooButton(
-                                  icon: Ic.round_check,
+                                  onButtonTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return TodooConfirmationDialogue(
+                                            confirmationDialogueTitle:
+                                                currentTask.isCompleted
+                                                    ? 'Mark As Incomplete?'
+                                                    : 'Confirm Completion',
+                                            confirmationDialogueBodyText: currentTask
+                                                    .isCompleted
+                                                ? 'Are you sure to mark task as Incomplete?'
+                                                : 'Are you sure to mark task as Completed?',
+                                            onCancelTap: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            confirmButtonText: 'Confirm',
+                                            onConfirmTap: () {
+                                              Navigator.of(context).pop();
+                                              final taskHandler = ref.read(
+                                                  allTasksProvider.notifier);
+                                              taskHandler.editTask(
+                                                currentTask
+                                                  ..isCompleted =
+                                                      !currentTask.isCompleted,
+                                              );
+                                            },
+                                          );
+                                        });
+                                  },
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
-                                  buttonText: 'Done',
-                                  onButtonTap: () {},
-                                  buttonHeight: 30,
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  buttonHeight: 38,
+                                  icon: currentTask.isCompleted
+                                      ? Mdi.cancel
+                                      : Ic.round_check,
+                                  buttonText: currentTask.isCompleted
+                                      ? 'Incomplete'
+                                      : 'Done',
                                 ),
                               ],
                             )

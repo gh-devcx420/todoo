@@ -2,6 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:todoo_app/constants.dart';
 import 'package:todoo_app/widgets/tasks_button.dart';
 
+/// A customizable text field component for the Todoo app.
+///
+/// `TodooTextField` offers a versatile text input field with various configuration options.
+/// It extends `StatelessWidget` and provides properties for tailoring the text field's appearance and behavior.
+///
+/// Key functionalities:
+///   - `build`: Constructs the text field with optional title and action icon.
+///     - Displays title using `Text` with theme-based styling (optional).
+///     - Includes a custom action button using `TodooButton` (optional).
+///     - The main text field is created using a `TextField` widget:
+///       - Configurable properties include:
+///         - Read-only mode (default: false).
+///         - Text input controller for managing text content.
+///         - Optional title and leading icon.
+///         - Minimum and maximum number of lines.
+///         - Maximum text length.
+///         - Text capitalization style (default: sentences).
+///         - Keyboard type (default: text).
+///         - Text input action (default: done).
+///         - Optional on-tap callback for handling text field taps.
+///         - Optional input picker flag for adjusting text style.
+///         - Optional focus node for managing focus state.
+///         - Optional action icon and tap callback.
+///       - Text changes are detected using `onChanged` and passed to the provided `onTextChanged` callback.
+///   - Utilizes `RawScrollbar` for a subtle scrollbar on multiline text fields.
 class TodooTextField extends StatelessWidget {
   const TodooTextField({
     super.key,
@@ -20,6 +45,7 @@ class TodooTextField extends StatelessWidget {
     this.focusNode,
     this.textFieldActionIcon,
     this.onActionIconTap,
+    required this.onTextChanged,
   });
 
   final bool? isReadOnly;
@@ -37,6 +63,7 @@ class TodooTextField extends StatelessWidget {
   final FocusNode? focusNode;
   final String? textFieldActionIcon;
   final Function()? onActionIconTap;
+  final Function(String) onTextChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +112,9 @@ class TodooTextField extends StatelessWidget {
             timeToFade: const Duration(milliseconds: 600),
             child: TextField(
               onTap: onTextFieldTap,
+              onChanged: (newvalue) {
+                onTextChanged(newvalue);
+              },
               readOnly: isReadOnly ?? false,
               focusNode: focusNode,
               cursorHeight: 20,

@@ -9,6 +9,18 @@ import 'package:todoo_app/utilities/util.dart';
 import 'package:todoo_app/widgets/tasks_alert_dialogue.dart';
 import 'package:todoo_app/widgets/tasks_button.dart';
 
+/// Settings screen for the Todoo app.
+///
+/// `SettingsScreen` allows users to customize the app's appearance and access other settings.
+/// It utilizes Riverpod to access the app theme seed color provider.
+/// Key functionalities:
+///   - `_buildListTile`: Creates a reusable ListTile widget with icon, title, and onTap functionality.
+///   - `build`: Builds the Settings screen using a Scaffold with AppBar and a ListView.
+///     - The ListView displays various options using `_buildListTile`:
+///       - Change App Colour: Opens a dialog to choose a new app theme color.
+///       - Rate App: Placeholder for future app rating functionality.
+///       - Report Bugs: Placeholder for future bug reporting functionality.
+///       - Login (Coming Soon): Disabled option for future login functionality.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
@@ -59,15 +71,16 @@ class SettingsScreen extends ConsumerWidget {
                                     .changeSeedColour(seedColourMap[colour]!);
                                 Navigator.of(context).pop();
                               },
-                              icon: Mdi.square_rounded,
-                              iconColour: seedColourMap[colour],
-                              buttonText: Utils.getColourLabel(colour),
-                              textColour: seedColourMap[colour],
-                              buttonColour:
-                                  seedColourMap[colour]!.withOpacity(0.15),
-                              buttonWidth: 200,
                               padding: const EdgeInsets.all(8),
                               margin: const EdgeInsets.all(4),
+                              buttonHeight: 38,
+                              buttonWidth: 200,
+                              icon: Mdi.square_rounded,
+                              iconColour: seedColourMap[colour],
+                              buttonColour:
+                                  seedColourMap[colour]!.withOpacity(0.15),
+                              buttonText: Utils.getColourLabel(colour),
+                              textColour: seedColourMap[colour],
                             ),
                           );
                         }).toList(),

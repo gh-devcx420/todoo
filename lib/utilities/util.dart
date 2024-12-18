@@ -1,6 +1,17 @@
 import 'package:intl/intl.dart';
 import 'package:todoo_app/enums.dart';
 
+/// Utility methods for formatting and processing data in the Todoo app.
+///
+/// `Utils` offers various helper functions for handling dates, times, and other data within the app.
+///
+/// Key functionalities:
+///   - `formatDate`: Formats a `DateTime` object into a human-readable date string (e.g., "21 Dec 2024").
+///   - `formatTime`: Formats a `DateTime` object into a human-readable time string (e.g., "10:30 AM").
+///     - Handles the case where no time is picked and displays a placeholder message.
+///   - `getPriorityLabel`: Transforms a `Priority` enum value into a user-friendly label (e.g., "High Priority").
+///   - `getCategoryLabel`: Transforms a `Category` enum value into a user-friendly label (e.g., "Work Category").
+///   - `getColourLabel`: Transforms an `AppColours` enum value into a user-friendly label (e.g., "Blue Colour").
 class Utils {
   static String formatDate(DateTime pickedDate) {
     final formatter = DateFormat('dd MMM yyyy');
